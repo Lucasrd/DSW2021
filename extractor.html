@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Extractor</title>
+</head>
+<body>
+
+<br><h2>Busque por uma receita</h2> <i> Powered by www.TudoGostoso.com.br</i><br>
+<div class="searchBox">
+	<input type="text" class="form-control" id="keyword" placeholder="Digite uma palavra chave">
+	<button type="button" id="searchButton" class="btn btn-primary">Pesquisar</button>
+</div>
+<div class="result"></div>
+
+<!-- Jquery JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<!-- Collecting TudoGostoso Data -->
+<script>
+
+	$("#searchButton").on("click",(e)=>{
+		loadRecipes($("#keyword").val());
+	});
+
+	function loadRecipes(keyword){
+		var searchUrl = "https://www.tudogostoso.com.br/busca?q=";
+		$.get(searchUrl+keyword, function( data ) {
+			var doc = new DOMParser().parseFromString(data, "text/html");
+			
+			$(".result")[0].innerHTML = "";
+			Array.from(retrieveRecipesList(doc)).forEach((item,index)=>{
+			
+				if (null != item.getElementsByTagName("a")){
+					item.getElementsByTagName("a")[0].target = "_blank";
+					item.getElementsByTagName("a")[0].href = "https://www.tudogostoso.com.br/receita/" + 
+					item.getElementsByTagName("a")[0].href.split("/receita/")[1];
+				}
+				$(".result")[0].appendChild(item);
+			
+			});
+		});
+	}
+
+	function retrieveRecipesList(document){
+		return Array.from(document.getElementsByClassName('recipe-card'));	
+	}
+</script>
+
+<!-- Personal CSS -->
+<style type="text/css">
+	body {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		padding: 0px 0px 0px 0px !important;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.result{
+		width: 90%;
+	}
+
+	.searchBox{
+		width: 70%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		padding-bottom: 2%;
+	}
+
+	#keyword {
+		border: 1px solid #ced4da !important;
+		margin-right: 0.5%;
+	}
+</style>
+
+<!-- TudoGostoso CSS -->
+<link rel="stylesheet" type="text/css" href="https://www.tudogostoso.com.br/assets/application-55f48e9703af8fffef80b66add34ffb8.css">
+<!-- BootStrap -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+
+</body>
+</html>
