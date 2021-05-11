@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Extractor</title>
+	<base href="https://www.tudogostoso.com.br/" target="_blank">
 </head>
 <body>
 
@@ -18,32 +19,26 @@
 <!-- Collecting TudoGostoso Data -->
 <script>
 
-	$("#searchButton").on("click",(e)=>{
+	$("#searchButton").on("click", (e) => {
 		loadRecipes($("#keyword").val());
 	});
 
 	function loadRecipes(keyword){
-		var searchUrl = "https://www.tudogostoso.com.br/busca?q=";
-		$.get(searchUrl+keyword, function( data ) {
-			var doc = new DOMParser().parseFromString(data, "text/html");
-			
+		var searchUrl = "https://www.tudogostoso.com.br/busca?q=" + keyword;
+		$.get(searchUrl, function(data) {
+			var page = new DOMParser().parseFromString(data, "text/html");
 			$(".result")[0].innerHTML = "";
-			Array.from(retrieveRecipesList(doc)).forEach((item,index)=>{
 			
-				if (null != item.getElementsByTagName("a")){
-					item.getElementsByTagName("a")[0].target = "_blank";
-					item.getElementsByTagName("a")[0].href = "https://www.tudogostoso.com.br/receita/" + 
-					item.getElementsByTagName("a")[0].href.split("/receita/")[1];
-				}
-				$(".result")[0].appendChild(item);
-			
-			});
+			var divRecipes = Array.from(page.querySelectorAll(".rounded .recipe-card"));
+			divRecipes
+				.filter(div => div.getElementsByTagName("a"))
+				.map(item => {
+					$(".result")[0].appendChild(item)
+				});
+				
 		});
 	}
 
-	function retrieveRecipesList(document){
-		return Array.from(document.getElementsByClassName('recipe-card'));	
-	}
 </script>
 
 <!-- Personal CSS -->
