@@ -47,29 +47,29 @@
 			return;			
 		}
 
+		function makeConnectionForSearch(data) {
+			const page = new DOMParser().parseFromString(data, "text/html");
+
+			if(page.querySelector(".no-results")){
+				putNoResultCard();
+				return;
+			}
+			
+			const divRecipes = Array.from(page.querySelectorAll(".col-lg-5 .rounded .recipe-card"));
+			divRecipes
+				.filter(div => div.getElementsByTagName("a"))
+				.map(item => {
+					$(".result")[0].appendChild(item)
+				});		
+		}
+	
 		$(".result")[0].innerHTML = "";
 		$("#noItemFoundDiv").css("display","none");
 		$("#loadingIcon").css("display","flex");
-		if(keyword) {
-			var searchUrl = "https://www.tudogostoso.com.br/busca?q=" + encodeURI(keyword);
-			$.get(searchUrl, function(data) {
-				var page = new DOMParser().parseFromString(data, "text/html");
-				if(page.querySelectorAll(".no-results").length == 0){
-					var divRecipes = Array.from(page.querySelectorAll(".rounded .recipe-card"));
-				$("#loadingIcon").css("display","none");
-				divRecipes
-					.filter(div => div.getElementsByTagName("a"))
-					.map(item => {
-						$(".result")[0].appendChild(item)
-					});
-				} else {
-					$("#loadingIcon").css("display","none");
-					$("#noItemFoundDiv").css("display","flex");
-				}
-			});
-		} else {
-				$("#loadingIcon").css("display","none");
-				$("#noItemFoundDiv").css("display","flex");
+
+		if(!keyword) {
+			putNoResultCard();
+			return;
 		}
 	}
 
