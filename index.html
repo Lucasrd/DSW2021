@@ -40,6 +40,13 @@
 	});
 
 	function loadRecipes(keyword){
+
+		function putNoResultCard() {
+			$("#loadingIcon").css("display","none");
+			$("#noItemFoundDiv").css("display","flex");
+			return;			
+		}
+
 		$(".result")[0].innerHTML = "";
 		$("#noItemFoundDiv").css("display","none");
 		$("#loadingIcon").css("display","flex");
@@ -49,12 +56,12 @@
 				var page = new DOMParser().parseFromString(data, "text/html");
 				if(page.querySelectorAll(".no-results").length == 0){
 					var divRecipes = Array.from(page.querySelectorAll(".rounded .recipe-card"));
-					$("#loadingIcon").css("display","none");
-					divRecipes
-						.filter(div => div.getElementsByTagName("a"))
-						.map(item => {
-							$(".result")[0].appendChild(item)
-						});
+				$("#loadingIcon").css("display","none");
+				divRecipes
+					.filter(div => div.getElementsByTagName("a"))
+					.map(item => {
+						$(".result")[0].appendChild(item)
+					});
 				} else {
 					$("#loadingIcon").css("display","none");
 					$("#noItemFoundDiv").css("display","flex");
