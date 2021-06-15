@@ -71,6 +71,10 @@
 			putNoResultCard();
 			return;
 		}
+
+		const searchUrl = `https://www.tudogostoso.com.br/busca?q=${encodeURI(keyword)}`;
+		$.get(searchUrl, makeConnectionForSearch); 
+
 	}
 
 </script>
