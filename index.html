@@ -1,27 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
 	<title>Extractor</title>
 	<base href="https://www.tudogostoso.com.br/" target="_blank">
 </head>
 <body>
 
-<br><h2>Busque por uma receita</h2> <i> Powered by www.TudoGostoso.com.br</i><br>
-<div class="searchBox">
-	<input type="text" class="form-control" id="keyword" placeholder="Digite uma palavra chave">
-	<button type="button" id="searchButton" class="btn btn-primary">Pesquisar</button>
-</div>
-<div class="result">
-</div>
-<div id="loadingIcon">
-  <i class="fas fa-spinner fa-spin"></i>
-</div>
-<div id="noItemFoundDiv">
-	<h5>Nenhum resultado encontrado. =( Tente outra busca.</h5>
-</div>
+	<br>
+	<h2>Busque por uma receita</h2> <em> Powered by www.TudoGostoso.com.br</em><br>
+	<div class="searchBox">
+		<input type="text" class="form-control" id="keyword" placeholder="Digite uma palavra chave">
+		<button type="button" id="searchButton" class="btn btn-primary">Pesquisar</button>
+	</div>
+	<div class="result">
+	</div>
+	<div id="loadingIcon">
+		<em class="fas fa-spinner fa-spin"></em>
+	</div>
+	<div id="noItemFoundDiv">
+		<h5>Nenhum resultado encontrado 😢. Tente outra busca.</h5>
+	</div>
 
 <!-- Jquery JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.js"
+		integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
 <!-- Collecting TudoGostoso Data -->
 <script>
@@ -37,30 +40,41 @@
 	});
 
 	function loadRecipes(keyword){
+
+		function putNoResultCard() {
+			$("#loadingIcon").css("display","none");
+			$("#noItemFoundDiv").css("display","flex");	
+		}
+
+		function makeConnectionForSearch(data) {
+			const page = new DOMParser().parseFromString(data, "text/html");
+
+			if(page.querySelector(".no-results")){
+				putNoResultCard();
+				return;
+			}
+			
+			const divRecipes = Array.from(page.querySelectorAll(".col-lg-5 .rounded .recipe-card"));
+			divRecipes
+				.filter(div => div.getElementsByTagName("a"))
+				.map(item => {
+					$(".result")[0].appendChild(item)
+				});		
+			$("#loadingIcon").css("display","none");
+		}
+	
 		$(".result")[0].innerHTML = "";
 		$("#noItemFoundDiv").css("display","none");
 		$("#loadingIcon").css("display","flex");
-		if(keyword) {
-			var searchUrl = "https://www.tudogostoso.com.br/busca?q=" + encodeURI(keyword);
-			$.get(searchUrl, function(data) {
-				var page = new DOMParser().parseFromString(data, "text/html");
-				if(page.querySelectorAll(".no-results").length == 0){
-					var divRecipes = Array.from(page.querySelectorAll(".rounded .recipe-card"));
-					$("#loadingIcon").css("display","none");
-					divRecipes
-						.filter(div => div.getElementsByTagName("a"))
-						.map(item => {
-							$(".result")[0].appendChild(item)
-						});
-				} else {
-					$("#loadingIcon").css("display","none");
-					$("#noItemFoundDiv").css("display","flex");
-				}
-			});
-		} else {
-				$("#loadingIcon").css("display","none");
-				$("#noItemFoundDiv").css("display","flex");
+
+		if(!keyword) {
+			putNoResultCard();
+			return;
 		}
+
+		const searchUrl = `https://www.tudogostoso.com.br/busca?q=${encodeURI(keyword)}`;
+		$.get(searchUrl, makeConnectionForSearch); 
+
 	}
 
 </script>
